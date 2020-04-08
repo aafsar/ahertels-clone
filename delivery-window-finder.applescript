@@ -100,7 +100,7 @@ to restartCheckout(selected_cart_url, window_id)
 			set current tab to last tab
 		end tell
 	end tell
-	delay 20 -- wait for page to load. it doesn't take that long
+	delay 10 -- wait for page to load. it doesn't take that long
 	
 	-- clicks the "Checkout Whole Foods Market Cart" button
 	clickClassName("a-button-input", 0, -1, window_id)
@@ -108,7 +108,7 @@ to restartCheckout(selected_cart_url, window_id)
 	clickClassName("a-button-text a-text-center", 0, -1, window_id)
 	delay 5 -- wait for substitution preferences
 	clickClassName("a-button-text a-text-center", 0, -1, window_id)
-	delay 15 -- wait for slot page to load
+	delay 10 -- wait for slot page to load
 	-- TO-DO: remove this load time if you are just gonna reload the page anyways or return to the top of the loop with a notice that the page has already been loaded
 	-- before loop restarts. close last tab
 	-- TO-DO: do a test to make sure we landed on the right page. if not, announce unknown error and exit loop
@@ -119,18 +119,14 @@ end restartCheckout
 
 
 -- USER PROMPTS:
--- 1. Welcome message w/ instructions & disclaimer
-
 
 -- 2. Prompt whether to ignore oos or wait for user to review
 set auto_ignore_oos to true
 
-javascriptEnabled to true
-
 
 -- 3. Prompt user to enable text message notifications
 set promptForNumber to false
-
+log "user selected no text messaging"
 
 -- 4. Prompt for delivery service type
 set selected_cart_url to wfm_cart_url
@@ -160,7 +156,7 @@ repeat while found_slot is false
 		end if
 
 		-- wait for the page to load
-		delay 20
+		delay 10
 
 		-- get the text on the page
 		set siteText to (text of last tab of window id amzn_win_id) as string
@@ -206,7 +202,7 @@ repeat while found_slot is false
 	else if siteText contains slot_page_keyword and (siteText contains "AM" or siteText contains "PM") then
 		-- landed on delivery slot page and delivery slot selection drop down appears aka. slot found!
 		display notification "Found delivery slot!" with title "Amazon" sound name "Sosumi"
-		say "Delivery slot appeared. Try to checkout. Act now, or be ready to perish"
+		say "Hey guys, I found it! Come here, dinner is ready!"
 
 
 		-- bring Safari window to front and expand to fill screen so delivery slots are clearly visible
@@ -215,14 +211,6 @@ repeat while found_slot is false
 			set miniaturized of window id amzn_win_id to false
 			-- wait for window to open
 			delay 1
-			-- maximize window 
-			-- this might be useful later on if I want to have it take a screenshot as proof of delivery slots found
-			-- Credit for fill to screen: https://macosxautomation.com/applescript/firsttutorial/18.html
-			tell application "System Events"
-				tell application "Finder" to get the bounds of the window of the desktop
-				tell application "Safari" to set the bounds of the front window to Â
-					{0, 22, (3rd item of the result), (4th item of the result)}
-			end tell
 		end tell
 
 		-- signals that the loop should end
